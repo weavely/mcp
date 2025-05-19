@@ -1,50 +1,108 @@
-# Building a Remote MCP Server on Cloudflare (Without Auth)
+# Weavely MCP – Remote MCP Server for Form Generation
 
-This example allows you to deploy a remote MCP server that doesn't require authentication on Cloudflare Workers. 
+This project sets up a **Model Context Protocol (MCP)** server using the `@modelcontextprotocol/sdk`, hosted on **Cloudflare Workers**, to programmatically generate forms using the Weavely API.
 
-## Get started: 
+---
+
+## 🚀 Features
+
+- Deploys an **auth-less MCP server** on Cloudflare Workers  
+- Exposes a tool: `create-form` to generate forms via prompt  
+- Uses `axios` for external API calls to [weavely.ai](https://weavely.ai)  
+- Built using TypeScript and the official `@modelcontextprotocol/sdk`  
+
+---
+
+## 🛠️ Technologies Used
+
+- 🧠 MCP SDK: `@modelcontextprotocol/sdk`  
+- 🌩️ Cloudflare Workers + Wrangler  
+- 🛡 Type-safe schema validation with `zod`  
+- 🌐 HTTP requests via `axios`  
+- 🧹 Formatting & linting with `biome`  
+
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/weavely/mcp.git
+cd mcp
+npm install
+```
+
+---
+
+## 🧪 Development
+
+Start a development server locally using Wrangler:
+
+```bash
+npm run dev
+```
+
+---
+
+## 📤 Deployment
+
+Deploy to Cloudflare Workers:
+
+```bash
+npm run deploy
+```
+
+Or use the Cloudflare Deploy Button:
 
 [![Deploy to Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/ai/tree/main/demos/remote-mcp-authless)
 
-This will deploy your MCP server to a URL like: `remote-mcp-server-authless.<your-account>.workers.dev/sse`
+---
 
-Alternatively, you can use the command line below to get the remote MCP Server created on your local machine:
-```bash
-npm create cloudflare@latest -- my-mcp-server --template=cloudflare/ai/demos/remote-mcp-authless
-```
+## 📺 Demo
 
-## Customizing your MCP Server
+Curious how it works? Watch a short demo here:
 
-To add your own [tools](https://developers.cloudflare.com/agents/model-context-protocol/tools/) to the MCP server, define each tool inside the `init()` method of `src/index.ts` using `this.server.tool(...)`. 
+▶️ [https://youtu.be/C1jZBrGV6jE](https://youtu.be/C1jZBrGV6jE)
 
-## Connect to Cloudflare AI Playground
+---
 
-You can connect to your MCP server from the Cloudflare AI Playground, which is a remote MCP client:
+## 🔧 Tool: `create-form`
 
-1. Go to https://playground.ai.cloudflare.com/
-2. Enter your deployed MCP server URL (`remote-mcp-server-authless.<your-account>.workers.dev/sse`)
-3. You can now use your MCP tools directly from the playground!
+This MCP agent defines one tool:
 
-## Connect Claude Desktop to your MCP server
-
-You can also connect to your remote MCP server from local MCP clients, by using the [mcp-remote proxy](https://www.npmjs.com/package/mcp-remote). 
-
-To connect to your MCP server from Claude Desktop, follow [Anthropic's Quickstart](https://modelcontextprotocol.io/quickstart/user) and within Claude Desktop go to Settings > Developer > Edit Config.
-
-Update with this configuration:
-
-```json
-{
-  "mcpServers": {
-    "calculator": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "http://localhost:8787/sse"  // or remote-mcp-server-authless.your-account.workers.dev/sse
-      ]
-    }
+- **Name:** `create-form`  
+- **Description:** Create a new Weavely form.  
+- **Input Schema:**
+  ```ts
+  {
+    name?: string;
+    prompt: string;
   }
-}
-```
+  ```
+- **Behavior:** Sends a POST request to `https://api.weavely.ai/v1/forms/generate` and returns the form content.
 
-Restart Claude and you should see the tools become available. 
+---
+
+## 🧰 Scripts
+
+| Script        | Description                       |
+|---------------|-----------------------------------|
+| `dev`         | Start development server          |
+| `deploy`      | Deploy to Cloudflare              |
+| `format`      | Format code using Biome           |
+| `lint:fix`    | Fix linting issues via Biome      |
+| `cf-typegen`  | Generate Cloudflare bindings      |
+
+---
+
+## 🗂 Folder Structure
+
+```
+weavely-mcp/
+├── src/
+│   └── index.ts           # Main MCP logic and tool registration
+├── worker-configuration.d.ts
+├── package.json
+├── wrangler.jsonc         # Cloudflare deployment config
+├── tsconfig.json
+└── .vscode/
+```
